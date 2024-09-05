@@ -21,7 +21,7 @@ export default function Home() {
         {/* <div className="h-screen w-full rounded-md md:justify-center dark:bg-black bg-white  dark:bg-lg-white/[0.2] bg-grid-black/[0.2] antialiased relative flex items-center justify-center"> */}
         {/* Radial gradient for the container to give a faded look */}
         <Spotlight
-          className="-top-40 left-0 md:left-60 md:-top-20"
+          className="-top-40 left-0 hidden md:block md:left-60 md:-top-20"
           fill="white"
         />
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
@@ -49,14 +49,14 @@ export default function Home() {
           </div>
         </section>
       </div>
-      <section className="flex justify-center items-center flex-col md:!mt-20 mt-[40px]">
+      <section className="flex justify-center items-center flex-col md:!mt-20 mt-[40px] ">
         <h2 className="text-4xl text-center">Choose what fits you right</h2>
         <p className="text-muted-foreground text-center">
           Our straight forward pricing plans are tailored to meet your needs. If
           {" your're"} not <br />
           ready to commit you can get started for free.
         </p>
-        <div className="flex  justify-center gap-4 flex-wrap mt-6">
+        <div className="flex  justify-center gap-4 flex-wrap mt-6 mb-20">
           {pricingCards.map((card) => (
             //WIP: wire up the free product from the stripe
             <Card
