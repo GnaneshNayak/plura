@@ -7,7 +7,7 @@ var react_1 = require("react");
 var mode_toggle_1 = require("../global/mode-toggle");
 var Navigation = function (_a) {
     var user = _a.user;
-    return (react_1["default"].createElement("div", { className: "fixed top-0 right-0 left-0 p-4 flex items-center justify-between z-10" },
+    return (react_1["default"].createElement("div", { className: "fixed top-0 right-0 left-0 p-4 flex items-center justify-between z-10\n      border-border/ bg-background/ backdrop-blur supports-[backdrop-filter]:bg-background/60\n    \n    " },
         react_1["default"].createElement("aside", { className: "flex items-center gap-2" },
             react_1["default"].createElement(image_1["default"], { src: './assets/plura-logo.svg', width: 40, height: 40, alt: "plur logo" }),
             react_1["default"].createElement("span", { className: "text-xl font-bold" }, " Plura.")),

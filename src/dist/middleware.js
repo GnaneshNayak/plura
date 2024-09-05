@@ -37,29 +37,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.config = void 0;
-var server_1 = require("next/server");
-var server_2 = require("@clerk/nextjs/server");
-var isPublicRoute = server_2.createRouteMatcher([
-    '/site',
-    'api/uploadthing',
-    '/agency/sign-in(.)',
-    '/agency/sign-up(.)',
-]);
-exports["default"] = server_2.clerkMiddleware(function (auth, request) { return __awaiter(void 0, void 0, void 0, function () {
-    var url;
-    return __generator(this, function (_a) {
-        url = request.nextUrl;
-        console.log(url);
-        if (url.pathname === '/') {
-            url.pathname = '/site';
-            return [2 /*return*/, server_1.NextResponse.redirect(url)];
-        }
-        if (!isPublicRoute(request)) {
+var server_1 = require("@clerk/nextjs/server");
+var server_2 = require("next/server");
+var isProtectedRoute = server_1.createRouteMatcher(['/group(.*)']);
+exports["default"] = server_1.clerkMiddleware(function (auth, req) { return __awaiter(void 0, void 0, void 0, function () {
+    var url, searchParams, hostname, pathWithSearchParams, customSubDomain;
+    var _a;
+    return __generator(this, function (_b) {
+        url = req.nextUrl;
+        if (isProtectedRoute(req))
             auth().protect();
+        searchParams = url.searchParams.toString();
+        console.log(searchParams);
+        hostname = req.headers;
+        console.log(hostname);
+        pathWithSearchParams = "" + url.pathname + (searchParams.length > 0 ? "?" + searchParams : '');
+        customSubDomain = (_a = hostname
+            .get('host')) === null || _a === void 0 ? void 0 : _a.split("" + process.env.NEXT_PUBLIC_DOMAIN).filter(Boolean)[0];
+        if (customSubDomain) {
+            return [2 /*return*/, server_2.NextResponse.rewrite(new URL("/" + customSubDomain + pathWithSearchParams, req.url))];
+        }
+        if (url.pathname === '/sign-in' || url.pathname === '/sign-up') {
+            return [2 /*return*/, server_2.NextResponse.redirect(new URL("/agency/sign-in", req.url))];
+        }
+        if (url.pathname === '/' ||
+            (url.pathname === '/site' && url.host === process.env.NEXT_PUBLIC_DOMAIN)) {
+            return [2 /*return*/, server_2.NextResponse.rewrite(new URL('/site', req.url))];
+        }
+        if (url.pathname.startsWith('/agency') ||
+            url.pathname.startsWith('/subaccount')) {
+            return [2 /*return*/, server_2.NextResponse.rewrite(new URL("" + pathWithSearchParams, req.url))];
         }
         return [2 /*return*/];
     });
 }); });
 exports.config = {
-    matcher: ['/((?!...|_next).*)', '/', '/api/trpc']
+    matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)']
 };
