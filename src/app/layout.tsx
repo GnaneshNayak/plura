@@ -1,9 +1,7 @@
-import type { Metadata } from 'next';
-import { Inter, DM_Sans } from 'next/font/google';
-import './globals.css';
-import { ClerkProvider } from '@clerk/nextjs';
-import { dark } from '@clerk/themes';
 import { ThemeProvider } from '@/providers/theme-provider';
+import type { Metadata } from 'next';
+import { DM_Sans } from 'next/font/google';
+import './globals.css';
 
 const inter = DM_Sans({ subsets: ['latin'] });
 

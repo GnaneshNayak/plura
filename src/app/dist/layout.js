@@ -1,9 +1,9 @@
 "use strict";
 exports.__esModule = true;
 exports.metadata = void 0;
+var theme_provider_1 = require("@/providers/theme-provider");
 var google_1 = require("next/font/google");
 require("./globals.css");
-var theme_provider_1 = require("@/providers/theme-provider");
 var inter = google_1.DM_Sans({ subsets: ['latin'] });
 exports.metadata = {
     title: 'Plura',
