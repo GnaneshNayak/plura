@@ -48,9 +48,7 @@ exports["default"] = server_1.clerkMiddleware(function (auth, req) { return __aw
         if (isProtectedRoute(req))
             auth().protect();
         searchParams = url.searchParams.toString();
-        console.log(searchParams);
         hostname = req.headers;
-        console.log(hostname);
         pathWithSearchParams = "" + url.pathname + (searchParams.length > 0 ? "?" + searchParams : '');
         customSubDomain = (_a = hostname
             .get('host')) === null || _a === void 0 ? void 0 : _a.split("" + process.env.NEXT_PUBLIC_DOMAIN).filter(Boolean)[0];

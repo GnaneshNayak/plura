@@ -36,18 +36,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var server_1 = require("@clerk/nextjs/server");
-var navigation_1 = require("next/navigation");
+var queries_1 = require("@/lib/queries");
 var react_1 = require("react");
 var Page = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
+    var agencyId, user;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, server_1.currentUser()];
+            case 0: return [4 /*yield*/, queries_1.verifyAndAcceptInvitation()];
             case 1:
-                user = _a.sent();
-                if (!user)
-                    navigation_1.redirect('/sign-in');
+                agencyId = _a.sent();
+                console.log(agencyId);
+                user = queries_1.getAuthUserDetails();
                 return [2 /*return*/, react_1["default"].createElement("div", null, "Agency dashboard")];
         }
     });

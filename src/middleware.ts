@@ -9,9 +9,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) auth().protect();
 
   const searchParams = url.searchParams.toString();
-  console.log(searchParams);
   let hostname = req.headers;
-  console.log(hostname);
 
   const pathWithSearchParams = `${url.pathname}${
     searchParams.length > 0 ? `?${searchParams}` : ''
