@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
+exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
 var server_1 = require("@clerk/nextjs/server");
 var db_1 = require("./db");
 var navigation_1 = require("next/navigation");
@@ -256,6 +256,72 @@ exports.verifyAndAcceptInvitation = function () { return __awaiter(void 0, void 
                 agency = _a.sent();
                 return [2 /*return*/, agency ? agency.agencyId : null];
             case 11: return [2 /*return*/];
+        }
+    });
+}); };
+exports.updateAgencyDetails = function (agencyId, agencyDetails) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.agency.update({
+                    where: {
+                        id: agencyId
+                    },
+                    data: __assign({}, agencyDetails)
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.deleteAgency = function (agencyId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.agency["delete"]({
+                    where: {
+                        id: agencyId
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.initUser = function (newUser) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, userData;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, server_1.currentUser()];
+            case 1:
+                user = _a.sent();
+                if (!user)
+                    return [2 /*return*/];
+                return [4 /*yield*/, db_1.db.user.upsert({
+                        where: {
+                            id: user.emailAddresses[0].emailAddress
+                        },
+                        update: newUser,
+                        create: {
+                            id: user.id,
+                            avatarUrl: user.imageUrl,
+                            email: user.emailAddresses[0].emailAddress,
+                            name: user.firstName + " " + user.lastName,
+                            role: newUser.role || 'SUBACCOUNT_USER'
+                        }
+                    })];
+            case 2:
+                userData = _a.sent();
+                return [4 /*yield*/, server_1.clerkClient.users.updateUserMetadata(user.id, {
+                        privateMetadata: {
+                            role: newUser.role || 'SUBACCOUNT_USER'
+                        }
+                    })];
+            case 3:
+                _a.sent();
+                return [2 /*return*/, userData];
         }
     });
 }); };

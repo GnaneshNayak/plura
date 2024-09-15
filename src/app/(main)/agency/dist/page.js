@@ -36,19 +36,55 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+var agency_details_1 = require("@/components/forms/agency-details");
 var queries_1 = require("@/lib/queries");
+var server_1 = require("@clerk/nextjs/server");
+var navigation_1 = require("next/navigation");
 var react_1 = require("react");
-var Page = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var agencyId, user;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, queries_1.verifyAndAcceptInvitation()];
-            case 1:
-                agencyId = _a.sent();
-                console.log(agencyId);
-                user = queries_1.getAuthUserDetails();
-                return [2 /*return*/, react_1["default"].createElement("div", null, "Agency dashboard")];
-        }
+var Page = function (_a) {
+    var searchParams = _a.searchParams;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var agencyId, user, statePath, stateAgencyId, authUser;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, queries_1.verifyAndAcceptInvitation()];
+                case 1:
+                    agencyId = _b.sent();
+                    console.log(agencyId);
+                    return [4 /*yield*/, queries_1.getAuthUserDetails()];
+                case 2:
+                    user = _b.sent();
+                    if (agencyId) {
+                        if ((user === null || user === void 0 ? void 0 : user.role) === 'SUBACCOUNT_GUEST' || (user === null || user === void 0 ? void 0 : user.role) === 'SUBACCOUNT_USER') {
+                            return [2 /*return*/, navigation_1.redirect('/subaccount')];
+                        }
+                        else if ((user === null || user === void 0 ? void 0 : user.role) === 'AGENCY_OWNER' || (user === null || user === void 0 ? void 0 : user.role) === 'AGENCY_ADMIN') {
+                            if (searchParams.plan) {
+                                return [2 /*return*/, navigation_1.redirect("/agency/" + agencyId + "/billing?plan=" + searchParams.plan)];
+                            }
+                            if (searchParams.state) {
+                                statePath = searchParams.state.split('___')[0];
+                                stateAgencyId = searchParams.state.split('___')[1];
+                                if (!stateAgencyId)
+                                    return [2 /*return*/, react_1["default"].createElement("div", null, "Not authorized")];
+                                return [2 /*return*/, navigation_1.redirect("/agency/" + stateAgencyId + "/" + statePath + "?code=" + searchParams.code)];
+                            }
+                            else
+                                return [2 /*return*/, navigation_1.redirect("/agency/" + agencyId)];
+                        }
+                        else {
+                            return [2 /*return*/, react_1["default"].createElement("div", null, "Not authorized")];
+                        }
+                    }
+                    return [4 /*yield*/, server_1.currentUser()];
+                case 3:
+                    authUser = _b.sent();
+                    return [2 /*return*/, (react_1["default"].createElement("div", { className: "flex justify-center items-center mt-4" },
+                            react_1["default"].createElement("div", { className: "max-w-[850px] border-[1px] p-4 rounded-xl" },
+                                react_1["default"].createElement("h1", { className: "text-4xl" }, " Create An Agency"),
+                                react_1["default"].createElement(agency_details_1["default"], { data: { companyEmail: authUser === null || authUser === void 0 ? void 0 : authUser.emailAddresses[0].emailAddress } }))))];
+            }
+        });
     });
-}); };
+};
 exports["default"] = Page;
