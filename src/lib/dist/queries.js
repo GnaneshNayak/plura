@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
+exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
 var server_1 = require("@clerk/nextjs/server");
 var db_1 = require("./db");
 var navigation_1 = require("next/navigation");
@@ -322,6 +322,68 @@ exports.initUser = function (newUser) { return __awaiter(void 0, void 0, void 0,
             case 3:
                 _a.sent();
                 return [2 /*return*/, userData];
+        }
+    });
+}); };
+exports.upsertAgency = function (agency, price) { return __awaiter(void 0, void 0, void 0, function () {
+    var agencyDetails, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!agency.companyEmail)
+                    return [2 /*return*/, null];
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, db_1.db.agency.upsert({
+                        where: {
+                            id: agency.id
+                        },
+                        update: agency,
+                        create: __assign(__assign({ users: {
+                                connect: { email: agency.companyEmail }
+                            } }, agency), { SidebarOption: {
+                                create: [
+                                    {
+                                        name: 'Dashboard',
+                                        icon: 'category',
+                                        link: "/agency/" + agency.id
+                                    },
+                                    {
+                                        name: 'Launchpad',
+                                        icon: 'clipboardIcon',
+                                        link: "/agency/" + agency.id + "/launchpad"
+                                    },
+                                    {
+                                        name: 'Billing',
+                                        icon: 'payment',
+                                        link: "/agency/" + agency.id + "/billing"
+                                    },
+                                    {
+                                        name: 'Settings',
+                                        icon: 'settings',
+                                        link: "/agency/" + agency.id + "/settings"
+                                    },
+                                    {
+                                        name: 'Sub Accounts',
+                                        icon: 'person',
+                                        link: "/agency/" + agency.id + "/all-subaccounts"
+                                    },
+                                    {
+                                        name: 'Team',
+                                        icon: 'shield',
+                                        link: "/agency/" + agency.id + "/team"
+                                    },
+                                ]
+                            } })
+                    })];
+            case 2:
+                agencyDetails = _a.sent();
+                return [2 /*return*/, agencyDetails];
+            case 3:
+                error_1 = _a.sent();
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };

@@ -1,10 +1,12 @@
 'use client';
 
+import { toast } from '@/hooks/use-toast';
 import {
   deleteAgency,
   initUser,
   saveActivityLogsNotification,
   updateAgencyDetails,
+  upsertAgency,
 } from '@/lib/queries';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Agency } from '@prisma/client';
@@ -12,6 +14,7 @@ import { NumberInput } from '@tremor/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { v4 } from 'uuid';
 import * as z from 'zod';
 import FileUpload from '../global/file-upload';
 import Loading from '../global/Loading';
@@ -45,8 +48,6 @@ import {
 } from '../ui/form';
 import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
-import { toast } from '@/hooks/use-toast';
-import router from 'next/router';
 
 type Props = {
   data?: Partial<Agency>;
@@ -126,9 +127,41 @@ const AgencyDetails = ({ data }: Props) => {
       // wip cust Id
       newUserData = await initUser({ role: 'AGENCY_OWNER' });
 
-      if (!data?.customerId) {
+      if (!data?.customerId) return;
+
+      const response = await upsertAgency({
+        id: data?.id ? data.id : v4(),
+        customerId: data?.customerId || '',
+        address: values.address,
+        agencyLogo: values.agencyLogo,
+        city: values.city,
+        companyPhone: values.companyPhone,
+        country: values.country,
+        name: values.name,
+        state: values.state,
+        whiteLabel: values.whiteLabel,
+        zipCode: values.zipCode,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        companyEmail: values.companyEmail,
+        connectAccountId: '',
+        goal: 5,
+      });
+      toast({
+        title: 'Created Agency',
+      });
+      if (data?.id) return router.refresh();
+      if (response) {
+        return router.refresh();
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+      toast({
+        variant: 'destructive',
+        title: 'Oppse!',
+        description: 'could not create your agency',
+      });
+    }
   };
 
   const handleDeleteAgency = async () => {

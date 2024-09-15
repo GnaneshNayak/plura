@@ -48,12 +48,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+var use_toast_1 = require("@/hooks/use-toast");
 var queries_1 = require("@/lib/queries");
 var zod_1 = require("@hookform/resolvers/zod");
 var react_1 = require("@tremor/react");
 var navigation_1 = require("next/navigation");
 var react_2 = require("react");
 var react_hook_form_1 = require("react-hook-form");
+var uuid_1 = require("uuid");
 var z = require("zod");
 var file_upload_1 = require("../global/file-upload");
 var Loading_1 = require("../global/Loading");
@@ -63,7 +65,6 @@ var card_1 = require("../ui/card");
 var form_1 = require("../ui/form");
 var input_1 = require("../ui/input");
 var switch_1 = require("../ui/switch");
-var use_toast_1 = require("@/hooks/use-toast");
 var FormSchema = z.object({
     name: z
         .string()
@@ -105,11 +106,11 @@ var AgencyDetails = function (_a) {
     }, [data]);
     var isLoading = form.formState.isSubmitting;
     var handleSubmit = function (values) { return __awaiter(void 0, void 0, void 0, function () {
-        var newUserData, customerId, bodyData, error_1;
+        var newUserData, customerId, bodyData, response, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
+                    _a.trys.push([0, 3, , 4]);
                     newUserData = void 0;
                     customerId = void 0;
                     if (!(data === null || data === void 0 ? void 0 : data.id)) {
@@ -140,13 +141,47 @@ var AgencyDetails = function (_a) {
                 case 1:
                     // wip cust Id
                     newUserData = _a.sent();
-                    if (!(data === null || data === void 0 ? void 0 : data.customerId)) {
-                    }
-                    return [3 /*break*/, 3];
+                    if (!(data === null || data === void 0 ? void 0 : data.customerId))
+                        return [2 /*return*/];
+                    return [4 /*yield*/, queries_1.upsertAgency({
+                            id: (data === null || data === void 0 ? void 0 : data.id) ? data.id : uuid_1.v4(),
+                            customerId: (data === null || data === void 0 ? void 0 : data.customerId) || '',
+                            address: values.address,
+                            agencyLogo: values.agencyLogo,
+                            city: values.city,
+                            companyPhone: values.companyPhone,
+                            country: values.country,
+                            name: values.name,
+                            state: values.state,
+                            whiteLabel: values.whiteLabel,
+                            zipCode: values.zipCode,
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                            companyEmail: values.companyEmail,
+                            connectAccountId: '',
+                            goal: 5
+                        })];
                 case 2:
+                    response = _a.sent();
+                    use_toast_1.toast({
+                        title: 'Created Agency'
+                    });
+                    if (data === null || data === void 0 ? void 0 : data.id)
+                        return [2 /*return*/, router.refresh()];
+                    if (response) {
+                        return [2 /*return*/, router.refresh()];
+                    }
+                    return [3 /*break*/, 4];
+                case 3:
                     error_1 = _a.sent();
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    console.log(error_1);
+                    use_toast_1.toast({
+                        variant: 'destructive',
+                        title: 'Oppse!',
+                        description: 'could not create your agency'
+                    });
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     }); };
