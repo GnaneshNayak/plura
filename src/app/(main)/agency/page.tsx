@@ -10,9 +10,10 @@ const Page = async ({
 }: {
   searchParams: { plan: Plan; state: string; code: string };
 }) => {
+  console.log('first');
   const agencyId = await verifyAndAcceptInvitation();
   console.log(agencyId);
-
+  console.log('second');
   const user = await getAuthUserDetails();
 
   if (agencyId) {
@@ -38,6 +39,8 @@ const Page = async ({
   }
 
   const authUser = await currentUser();
+  console.log('main page');
+  console.log(authUser?.emailAddresses[0].emailAddress);
 
   return (
     <div className="flex justify-center items-center mt-4">

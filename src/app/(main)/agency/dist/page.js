@@ -47,10 +47,13 @@ var Page = function (_a) {
         var agencyId, user, statePath, stateAgencyId, authUser;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, queries_1.verifyAndAcceptInvitation()];
+                case 0:
+                    console.log('first');
+                    return [4 /*yield*/, queries_1.verifyAndAcceptInvitation()];
                 case 1:
                     agencyId = _b.sent();
                     console.log(agencyId);
+                    console.log('second');
                     return [4 /*yield*/, queries_1.getAuthUserDetails()];
                 case 2:
                     user = _b.sent();
@@ -79,6 +82,8 @@ var Page = function (_a) {
                     return [4 /*yield*/, server_1.currentUser()];
                 case 3:
                     authUser = _b.sent();
+                    console.log('main page');
+                    console.log(authUser === null || authUser === void 0 ? void 0 : authUser.emailAddresses[0].emailAddress);
                     return [2 /*return*/, (react_1["default"].createElement("div", { className: "flex justify-center items-center mt-4" },
                             react_1["default"].createElement("div", { className: "max-w-[850px] border-[1px] p-4 rounded-xl" },
                                 react_1["default"].createElement("h1", { className: "text-4xl" }, " Create An Agency"),

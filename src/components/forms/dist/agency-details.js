@@ -141,8 +141,6 @@ var AgencyDetails = function (_a) {
                 case 1:
                     // wip cust Id
                     newUserData = _a.sent();
-                    if (!(data === null || data === void 0 ? void 0 : data.customerId))
-                        return [2 /*return*/];
                     return [4 /*yield*/, queries_1.upsertAgency({
                             id: (data === null || data === void 0 ? void 0 : data.id) ? data.id : uuid_1.v4(),
                             customerId: (data === null || data === void 0 ? void 0 : data.customerId) || '',

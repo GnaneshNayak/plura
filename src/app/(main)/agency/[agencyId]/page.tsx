@@ -1,5 +1,6 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
-
+import axios from 'axios';
 const Page = ({
   params,
 }: {
@@ -8,6 +9,7 @@ const Page = ({
   };
 }) => {
   console.log(params);
+
   return <div>Page {params.agencyId}</div>;
 };
 

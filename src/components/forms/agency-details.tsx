@@ -71,6 +71,7 @@ const FormSchema = z.object({
 const AgencyDetails = ({ data }: Props) => {
   const router = useRouter();
   const [deletingAgency, setDeletingAgency] = useState(false);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     mode: 'onChange',
     resolver: zodResolver(FormSchema),
@@ -127,7 +128,7 @@ const AgencyDetails = ({ data }: Props) => {
       // wip cust Id
       newUserData = await initUser({ role: 'AGENCY_OWNER' });
 
-      if (!data?.customerId) return;
+      // if (!data?.customerId) return;
 
       const response = await upsertAgency({
         id: data?.id ? data.id : v4(),

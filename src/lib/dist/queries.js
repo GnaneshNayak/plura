@@ -48,10 +48,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
+exports.upsertSubAccount = exports.getNotificationAndUser = exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
 var server_1 = require("@clerk/nextjs/server");
 var db_1 = require("./db");
 var navigation_1 = require("next/navigation");
+var uuid_1 = require("uuid");
 exports.getAuthUserDetails = function () { return __awaiter(void 0, void 0, void 0, function () {
     var user, userData;
     return __generator(this, function (_a) {
@@ -264,9 +265,7 @@ exports.updateAgencyDetails = function (agencyId, agencyDetails) { return __awai
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, db_1.db.agency.update({
-                    where: {
-                        id: agencyId
-                    },
+                    where: { id: agencyId },
                     data: __assign({}, agencyDetails)
                 })];
             case 1:
@@ -301,7 +300,7 @@ exports.initUser = function (newUser) { return __awaiter(void 0, void 0, void 0,
                     return [2 /*return*/];
                 return [4 /*yield*/, db_1.db.user.upsert({
                         where: {
-                            id: user.emailAddresses[0].emailAddress
+                            email: user.emailAddresses[0].emailAddress
                         },
                         update: newUser,
                         create: {
@@ -382,8 +381,123 @@ exports.upsertAgency = function (agency, price) { return __awaiter(void 0, void 
                 return [2 /*return*/, agencyDetails];
             case 3:
                 error_1 = _a.sent();
+                console.log(error_1);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getNotificationAndUser = function (agencyId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, db_1.db.notification.findMany({
+                        where: {
+                            agencyId: agencyId
+                        },
+                        include: {
+                            User: true
+                        },
+                        orderBy: {
+                            createdAt: 'desc'
+                        }
+                    })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+            case 2:
+                error_2 = _a.sent();
+                console.error(error_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.upsertSubAccount = function (subAccount) { return __awaiter(void 0, void 0, void 0, function () {
+    var agencyOwner, permissionId, response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!subAccount.companyEmail)
+                    return [2 /*return*/, null];
+                return [4 /*yield*/, db_1.db.user.findFirst({
+                        where: {
+                            Agency: {
+                                id: subAccount.agencyId
+                            },
+                            role: 'AGENCY_OWNER'
+                        }
+                    })];
+            case 1:
+                agencyOwner = _a.sent();
+                if (!agencyOwner)
+                    return [2 /*return*/, console.log('🔴Erorr could not create subaccount')];
+                permissionId = uuid_1.v4();
+                return [4 /*yield*/, db_1.db.subAccount.upsert({
+                        where: { id: subAccount.id },
+                        update: subAccount,
+                        create: __assign(__assign({}, subAccount), { Permissions: {
+                                create: {
+                                    access: true,
+                                    email: agencyOwner.email,
+                                    id: permissionId
+                                },
+                                connect: {
+                                    subAccountId: subAccount.id,
+                                    id: permissionId
+                                }
+                            }, Pipeline: {
+                                create: { name: 'Lead Cycle' }
+                            }, SidebarOption: {
+                                create: [
+                                    {
+                                        name: 'Launchpad',
+                                        icon: 'clipboardIcon',
+                                        link: "/subaccount/" + subAccount.id + "/launchpad"
+                                    },
+                                    {
+                                        name: 'Settings',
+                                        icon: 'settings',
+                                        link: "/subaccount/" + subAccount.id + "/settings"
+                                    },
+                                    {
+                                        name: 'Funnels',
+                                        icon: 'pipelines',
+                                        link: "/subaccount/" + subAccount.id + "/funnels"
+                                    },
+                                    {
+                                        name: 'Media',
+                                        icon: 'database',
+                                        link: "/subaccount/" + subAccount.id + "/media"
+                                    },
+                                    {
+                                        name: 'Automations',
+                                        icon: 'chip',
+                                        link: "/subaccount/" + subAccount.id + "/automations"
+                                    },
+                                    {
+                                        name: 'Pipelines',
+                                        icon: 'flag',
+                                        link: "/subaccount/" + subAccount.id + "/pipelines"
+                                    },
+                                    {
+                                        name: 'Contacts',
+                                        icon: 'person',
+                                        link: "/subaccount/" + subAccount.id + "/contacts"
+                                    },
+                                    {
+                                        name: 'Dashboard',
+                                        icon: 'category',
+                                        link: "/subaccount/" + subAccount.id
+                                    },
+                                ]
+                            } })
+                    })];
+            case 2:
+                response = _a.sent();
+                return [2 /*return*/, response];
         }
     });
 }); };
