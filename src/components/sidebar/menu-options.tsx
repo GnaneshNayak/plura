@@ -25,6 +25,8 @@ import Link from 'next/link';
 import { useModal } from '@/providers/modal-provider';
 import CustomModal from '../global/custom-modal';
 import SubAccountDetails from '../forms/subaccounts-details';
+import { Separator } from '../ui/separator';
+import { icons } from '@/lib/constants';
 
 type Props = {
   defaultOpen?: boolean;
@@ -248,6 +250,45 @@ const MenuOptions = ({
               </Command>
             </PopoverContent>
           </Popover>
+          <p className="text-muted-foreground mb-2 text-xs">MENU LINKS </p>
+          <Separator className="mb-4" />
+          <nav className="relative">
+            <Command>
+              <CommandInput placeholder="search...." />
+              <CommandList className="pb-4 overflow-visible">
+                <CommandEmpty>No results found</CommandEmpty>
+                <CommandGroup>
+                  {sidebarOpt.map((sidebarOptions) => {
+                    let val;
+                    const results = icons?.find(
+                      (icon) => icon.value === sidebarOptions.icon,
+                    );
+
+                    if (results) {
+                      val = <results.path />;
+                    }
+
+                    return (
+                      <CommandItem
+                        key={sidebarOptions.id}
+                        className="md:w-[320px] w-full"
+                      >
+                        <Link
+                          href={sidebarOptions.link}
+                          className="flex items-center gap-2 hover:bg-transparent rounded-md
+                          transition-all md:w-full w-[320px]
+                          "
+                        >
+                          {val}
+                          {sidebarOptions.name}
+                        </Link>
+                      </CommandItem>
+                    );
+                  })}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </nav>
         </div>
       </SheetContent>
     </Sheet>

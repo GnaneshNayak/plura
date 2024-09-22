@@ -14,6 +14,8 @@ var link_1 = require("next/link");
 var modal_provider_1 = require("@/providers/modal-provider");
 var custom_modal_1 = require("../global/custom-modal");
 var subaccounts_details_1 = require("../forms/subaccounts-details");
+var separator_1 = require("../ui/separator");
+var constants_1 = require("@/lib/constants");
 var MenuOptions = function (_a) {
     var _b, _c, _d, _e, _f, _g;
     var defaultOpen = _a.defaultOpen, subAccounts = _a.subAccounts, sidebarOpt = _a.sidebarOpt, sidebarLogo = _a.sidebarLogo, details = _a.details, user = _a.user, id = _a.id;
@@ -87,6 +89,24 @@ var MenuOptions = function (_a) {
                                             React.createElement(subaccounts_details_1["default"], { agencyDetails: user === null || user === void 0 ? void 0 : user.Agency, userId: user === null || user === void 0 ? void 0 : user.id, userName: user === null || user === void 0 ? void 0 : user.name })));
                                     } },
                                     React.createElement(lucide_react_1.PlusCircleIcon, { size: 15 }),
-                                    "Create Sub Account"))))))))));
+                                    "Create Sub Account")))))),
+                React.createElement("p", { className: "text-muted-foreground mb-2 text-xs" }, "MENU LINKS "),
+                React.createElement(separator_1.Separator, { className: "mb-4" }),
+                React.createElement("nav", { className: "relative" },
+                    React.createElement(command_1.Command, null,
+                        React.createElement(command_1.CommandInput, { placeholder: "search...." }),
+                        React.createElement(command_1.CommandList, { className: "pb-4 overflow-visible" },
+                            React.createElement(command_1.CommandEmpty, null, "No results found"),
+                            React.createElement(command_1.CommandGroup, null, sidebarOpt.map(function (sidebarOptions) {
+                                var val;
+                                var results = constants_1.icons === null || constants_1.icons === void 0 ? void 0 : constants_1.icons.find(function (icon) { return icon.value === sidebarOptions.icon; });
+                                if (results) {
+                                    val = React.createElement(results.path, null);
+                                }
+                                return (React.createElement(command_1.CommandItem, { key: sidebarOptions.id, className: "md:w-[320px] w-full" },
+                                    React.createElement(link_1["default"], { href: sidebarOptions.link, className: "flex items-center gap-2 hover:bg-transparent rounded-md\n                          transition-all md:w-full w-[320px]\n                          " },
+                                        val,
+                                        sidebarOptions.name)));
+                            })))))))));
 };
 exports["default"] = MenuOptions;
