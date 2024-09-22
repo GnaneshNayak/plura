@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import React, { ReactNode } from 'react';
 import Unauthorized from '../unauthorized/page';
 import Sidebar from '@/components/sidebar';
+import BlurPage from '@/components/global/blur-page';
 
 type Props = {
   children: ReactNode;
@@ -36,7 +37,11 @@ const Layout = async ({ children, params }: Props) => {
   return (
     <div className="h-screen overflow-hidden">
       <Sidebar id={params.agencyId} type="agency" />
-      <div className="md:pl-[300px]">{children}</div>
+      <div className="md:pl-[300px]">
+        <div className="relative">
+          <BlurPage>{children}</BlurPage>
+        </div>
+      </div>
     </div>
   );
 };

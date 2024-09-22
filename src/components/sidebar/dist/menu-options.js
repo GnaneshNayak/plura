@@ -1,5 +1,16 @@
 'use client';
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 exports.__esModule = true;
 var clsx_1 = require("clsx");
 var lucide_react_1 = require("lucide-react");
@@ -28,7 +39,7 @@ var MenuOptions = function (_a) {
     if (!isMounted)
         return;
     console.log(user);
-    return (React.createElement(sheet_1.Sheet, { modal: false, open: true },
+    return (React.createElement(sheet_1.Sheet, __assign({ modal: false }, openState),
         React.createElement(sheet_1.SheetTrigger, { className: "absolute top-4 left-4 z-[100] md:!hidden flex" },
             React.createElement(button_1.Button, { variant: 'outline', size: 'icon' },
                 React.createElement(lucide_react_1.Menu, null))),
