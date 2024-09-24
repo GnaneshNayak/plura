@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.upsertSubAccount = exports.getNotificationAndUser = exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
+exports.changeUserPermissions = exports.updateUser = exports.getUserPermissions = exports.upsertSubAccount = exports.getNotificationAndUser = exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
 var server_1 = require("@clerk/nextjs/server");
 var db_1 = require("./db");
 var navigation_1 = require("next/navigation");
@@ -498,6 +498,67 @@ exports.upsertSubAccount = function (subAccount) { return __awaiter(void 0, void
             case 2:
                 response = _a.sent();
                 return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.getUserPermissions = function (userId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.user.findUnique({
+                    where: { id: userId },
+                    select: { Permissions: { include: { SubAccount: true } } }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.updateUser = function (user) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.user.update({
+                    where: { email: user.email },
+                    data: __assign({}, user)
+                })];
+            case 1:
+                response = _a.sent();
+                return [4 /*yield*/, server_1.clerkClient.users.updateUserMetadata(response.id, {
+                        privateMetadata: {
+                            role: user.role || 'SUBACCOUNT_USER'
+                        }
+                    })];
+            case 2:
+                _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.changeUserPermissions = function (permissionId, userEmail, subAccountId, permission) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, db_1.db.permissions.upsert({
+                        where: { id: permissionId },
+                        update: { access: permission },
+                        create: {
+                            access: permission,
+                            email: userEmail,
+                            subAccountId: subAccountId
+                        }
+                    })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+            case 2:
+                error_3 = _a.sent();
+                console.log('🔴Could not change persmission', error_3);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
