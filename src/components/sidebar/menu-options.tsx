@@ -67,7 +67,7 @@ const MenuOptions = ({
       // open={true}
       {...openState}
     >
-      <SheetTrigger className="absolute top-4 left-4 z-[100] md:!hidden flex">
+      <SheetTrigger className="absolute top-4 left-4 z-[900] md:!hidden flex">
         <Button variant={'outline'} size={'icon'}>
           <Menu />
         </Button>

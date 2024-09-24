@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.changeUserPermissions = exports.updateUser = exports.getUserPermissions = exports.upsertSubAccount = exports.getNotificationAndUser = exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
+exports.deleteSubAccount = exports.getSubaccountDetails = exports.changeUserPermissions = exports.updateUser = exports.getUserPermissions = exports.upsertSubAccount = exports.getNotificationAndUser = exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
 var server_1 = require("@clerk/nextjs/server");
 var db_1 = require("./db");
 var navigation_1 = require("next/navigation");
@@ -559,6 +559,36 @@ exports.changeUserPermissions = function (permissionId, userEmail, subAccountId,
                 console.log('🔴Could not change persmission', error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getSubaccountDetails = function (subaccountId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.subAccount.findUnique({
+                    where: {
+                        id: subaccountId
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.deleteSubAccount = function (subaccountId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.subAccount["delete"]({
+                    where: {
+                        id: subaccountId
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
         }
     });
 }); };

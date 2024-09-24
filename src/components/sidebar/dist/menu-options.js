@@ -40,7 +40,7 @@ var MenuOptions = function (_a) {
         return;
     console.log(user);
     return (React.createElement(sheet_1.Sheet, __assign({ modal: false }, openState),
-        React.createElement(sheet_1.SheetTrigger, { className: "absolute top-4 left-4 z-[100] md:!hidden flex" },
+        React.createElement(sheet_1.SheetTrigger, { className: "absolute top-4 left-4 z-[900] md:!hidden flex" },
             React.createElement(button_1.Button, { variant: 'outline', size: 'icon' },
                 React.createElement(lucide_react_1.Menu, null))),
         React.createElement(sheet_1.SheetContent, { showX: !defaultOpen, side: 'left', className: clsx_1["default"]('bg-background/80 backdrop-blur-xl border-r-[1px] fixed top-0 p-6', {
