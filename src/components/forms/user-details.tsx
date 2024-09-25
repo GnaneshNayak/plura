@@ -53,7 +53,7 @@ import Loading from '../global/Loading';
 
 type Props = {
   type: 'agency' | 'subaccount';
-  id: string;
+  id: string | null;
   subAccounts?: SubAccount[];
   userData?: Partial<User>;
 };
