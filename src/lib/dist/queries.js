@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.sendInvitation = exports.getUser = exports.deleteUser = exports.deleteSubAccount = exports.getSubaccountDetails = exports.changeUserPermissions = exports.updateUser = exports.getUserPermissions = exports.upsertSubAccount = exports.getNotificationAndUser = exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
+exports.deleteMedia = exports.createMedia = exports.getMedia = exports.sendInvitation = exports.getUser = exports.deleteUser = exports.deleteSubAccount = exports.getSubaccountDetails = exports.changeUserPermissions = exports.updateUser = exports.getUserPermissions = exports.upsertSubAccount = exports.getNotificationAndUser = exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
 var server_1 = require("@clerk/nextjs/server");
 var db_1 = require("./db");
 var navigation_1 = require("next/navigation");
@@ -653,6 +653,54 @@ exports.sendInvitation = function (role, email, agencyId) { return __awaiter(voi
                 console.log(error_4);
                 throw error_4;
             case 5: return [2 /*return*/, resposne];
+        }
+    });
+}); };
+exports.getMedia = function (subaccountId) { return __awaiter(void 0, void 0, void 0, function () {
+    var mediafiles;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.subAccount.findUnique({
+                    where: {
+                        id: subaccountId
+                    },
+                    include: { Media: true }
+                })];
+            case 1:
+                mediafiles = _a.sent();
+                return [2 /*return*/, mediafiles];
+        }
+    });
+}); };
+exports.createMedia = function (subaccountId, mediaFile) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.media.create({
+                    data: {
+                        link: mediaFile.link,
+                        name: mediaFile.name,
+                        subAccountId: subaccountId
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.deleteMedia = function (mediaId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.media["delete"]({
+                    where: {
+                        id: mediaId
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
         }
     });
 }); };
