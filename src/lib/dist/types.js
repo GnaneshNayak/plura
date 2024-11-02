@@ -36,7 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+exports.TicketFormSchema = exports.LaneFormSchema = exports.CreatePipelineFormSchema = exports.CreateFunnelFormSchema = void 0;
 var db_1 = require("./db");
+var zod_1 = require("zod");
 var __getUsersWithAgencySubAccountPermissionsSidebarOptions = function (agencyId) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -51,3 +53,23 @@ var __getUsersWithAgencySubAccountPermissionsSidebarOptions = function (agencyId
         }
     });
 }); };
+exports.CreateFunnelFormSchema = zod_1.z.object({
+    name: zod_1.z.string().min(1),
+    description: zod_1.z.string(),
+    subDomainName: zod_1.z.string().optional(),
+    favicon: zod_1.z.string().optional()
+});
+exports.CreatePipelineFormSchema = zod_1.z.object({
+    name: zod_1.z.string().min(1)
+});
+exports.LaneFormSchema = zod_1.z.object({
+    name: zod_1.z.string().min(1)
+});
+var currencyNumberRegex = /^\d+(\.\d{1,2})?$/;
+exports.TicketFormSchema = zod_1.z.object({
+    name: zod_1.z.string().min(1),
+    description: zod_1.z.string().optional(),
+    value: zod_1.z.string().refine(function (value) { return currencyNumberRegex.test(value); }, {
+        message: 'Value must be a valid price.'
+    })
+});

@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.deleteMedia = exports.createMedia = exports.getMedia = exports.sendInvitation = exports.getUser = exports.deleteUser = exports.deleteSubAccount = exports.getSubaccountDetails = exports.changeUserPermissions = exports.updateUser = exports.getUserPermissions = exports.upsertSubAccount = exports.getNotificationAndUser = exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
+exports.getFunnel = exports.getFunnels = exports.upsertContact = exports.deleteTag = exports.getTagsForSubaccount = exports.upsertTag = exports.deleteTicket = exports.upsertTicket = exports.searchContacts = exports.getSubAccountTeamMembers = exports._getTicketsWithAllRelations = exports.getTicketsWithTags = exports.deleteLane = exports.upsertLane = exports.deletePipeline = exports.upsertPipeline = exports.upsertFunnel = exports.updateTicketsOrder = exports.updateLanesOrder = exports.getLanesWithTicketAndTags = exports.getPipelineDetails = exports.deleteMedia = exports.createMedia = exports.getMedia = exports.sendInvitation = exports.getUser = exports.deleteUser = exports.deleteSubAccount = exports.getSubaccountDetails = exports.changeUserPermissions = exports.updateUser = exports.getUserPermissions = exports.upsertSubAccount = exports.getNotificationAndUser = exports.upsertAgency = exports.initUser = exports.deleteAgency = exports.updateAgencyDetails = exports.verifyAndAcceptInvitation = exports.createTeamUser = exports.saveActivityLogsNotification = exports.getAuthUserDetails = void 0;
 var server_1 = require("@clerk/nextjs/server");
 var db_1 = require("./db");
 var navigation_1 = require("next/navigation");
@@ -701,6 +701,417 @@ exports.deleteMedia = function (mediaId) { return __awaiter(void 0, void 0, void
             case 1:
                 response = _a.sent();
                 return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.getPipelineDetails = function (pipelineId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.pipeline.findUnique({
+                    where: {
+                        id: pipelineId
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.getLanesWithTicketAndTags = function (pipelineId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.lane.findMany({
+                    where: {
+                        pipelineId: pipelineId
+                    },
+                    orderBy: { order: 'asc' },
+                    include: {
+                        Tickets: {
+                            orderBy: {
+                                order: 'asc'
+                            },
+                            include: {
+                                Tags: true,
+                                Assigned: true,
+                                Customer: true
+                            }
+                        }
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.updateLanesOrder = function (lanes) { return __awaiter(void 0, void 0, void 0, function () {
+    var updateTrans, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                updateTrans = lanes.map(function (lane) {
+                    return db_1.db.lane.update({
+                        where: {
+                            id: lane.id
+                        },
+                        data: {
+                            order: lane.order
+                        }
+                    });
+                });
+                return [4 /*yield*/, db_1.db.$transaction(updateTrans)];
+            case 1:
+                _a.sent();
+                console.log('🟢 Done reordered 🟢');
+                return [3 /*break*/, 3];
+            case 2:
+                error_5 = _a.sent();
+                console.log(error_5, 'ERROR UPDATE LANES ORDER');
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.updateTicketsOrder = function (tickets) { return __awaiter(void 0, void 0, void 0, function () {
+    var updateTrans, error_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                updateTrans = tickets.map(function (ticket) {
+                    return db_1.db.ticket.update({
+                        where: {
+                            id: ticket.id
+                        },
+                        data: {
+                            order: ticket.order,
+                            laneId: ticket.laneId
+                        }
+                    });
+                });
+                return [4 /*yield*/, db_1.db.$transaction(updateTrans)];
+            case 1:
+                _a.sent();
+                console.log('🟢 Done reordered 🟢');
+                return [3 /*break*/, 3];
+            case 2:
+                error_6 = _a.sent();
+                console.log(error_6, '🔴 ERROR UPDATE TICKET ORDER');
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.upsertFunnel = function (subaccountId, funnel, funnelId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.funnel.upsert({
+                    where: { id: funnelId },
+                    update: funnel,
+                    create: __assign(__assign({}, funnel), { id: funnelId || uuid_1.v4(), subAccountId: subaccountId })
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.upsertPipeline = function (pipeline) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.pipeline.upsert({
+                    where: { id: pipeline.id || uuid_1.v4() },
+                    update: pipeline,
+                    create: pipeline
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+function deletePipeline(pipelineId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, db_1.db.pipeline["delete"]({
+                        where: {
+                            id: pipelineId
+                        }
+                    })];
+                case 1:
+                    response = _a.sent();
+                    return [2 /*return*/, response];
+            }
+        });
+    });
+}
+exports.deletePipeline = deletePipeline;
+exports.upsertLane = function (lane) { return __awaiter(void 0, void 0, void 0, function () {
+    var order, lanes, response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!!lane.order) return [3 /*break*/, 2];
+                return [4 /*yield*/, db_1.db.lane.findMany({
+                        where: {
+                            pipelineId: lane.pipelineId
+                        }
+                    })];
+            case 1:
+                lanes = _a.sent();
+                order = lanes.length;
+                return [3 /*break*/, 3];
+            case 2:
+                order = lane.order;
+                _a.label = 3;
+            case 3: return [4 /*yield*/, db_1.db.lane.upsert({
+                    where: { id: lane.id || uuid_1.v4() },
+                    update: lane,
+                    create: __assign(__assign({}, lane), { order: order })
+                })];
+            case 4:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.deleteLane = function (laneId) { return __awaiter(void 0, void 0, void 0, function () {
+    var resposne;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.lane["delete"]({ where: { id: laneId } })];
+            case 1:
+                resposne = _a.sent();
+                return [2 /*return*/, resposne];
+        }
+    });
+}); };
+exports.getTicketsWithTags = function (pipelineId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.ticket.findMany({
+                    where: {
+                        Lane: {
+                            pipelineId: pipelineId
+                        }
+                    },
+                    include: { Tags: true, Assigned: true, Customer: true }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports._getTicketsWithAllRelations = function (laneId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.ticket.findMany({
+                    where: { laneId: laneId },
+                    include: {
+                        Assigned: true,
+                        Customer: true,
+                        Lane: true,
+                        Tags: true
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.getSubAccountTeamMembers = function (subaccountId) { return __awaiter(void 0, void 0, void 0, function () {
+    var subaccountUsersWithAccess;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.user.findMany({
+                    where: {
+                        Agency: {
+                            SubAccount: {
+                                some: {
+                                    id: subaccountId
+                                }
+                            }
+                        },
+                        role: 'SUBACCOUNT_USER',
+                        Permissions: {
+                            some: {
+                                subAccountId: subaccountId,
+                                access: true
+                            }
+                        }
+                    }
+                })];
+            case 1:
+                subaccountUsersWithAccess = _a.sent();
+                return [2 /*return*/, subaccountUsersWithAccess];
+        }
+    });
+}); };
+exports.searchContacts = function (searchTerms) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.contact.findMany({
+                    where: {
+                        name: {
+                            contains: searchTerms
+                        }
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.upsertTicket = function (ticket, tags) { return __awaiter(void 0, void 0, void 0, function () {
+    var order, tickets, response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!!ticket.order) return [3 /*break*/, 2];
+                return [4 /*yield*/, db_1.db.ticket.findMany({
+                        where: { laneId: ticket.laneId }
+                    })];
+            case 1:
+                tickets = _a.sent();
+                order = tickets.length;
+                return [3 /*break*/, 3];
+            case 2:
+                order = ticket.order;
+                _a.label = 3;
+            case 3: return [4 /*yield*/, db_1.db.ticket.upsert({
+                    where: {
+                        id: ticket.id || uuid_1.v4()
+                    },
+                    update: __assign(__assign({}, ticket), { Tags: { set: tags } }),
+                    create: __assign(__assign({}, ticket), { Tags: { connect: tags }, order: order }),
+                    include: {
+                        Assigned: true,
+                        Customer: true,
+                        Tags: true,
+                        Lane: true
+                    }
+                })];
+            case 4:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.deleteTicket = function (ticketId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.ticket["delete"]({
+                    where: {
+                        id: ticketId
+                    }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.upsertTag = function (subaccountId, tag) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.tag.upsert({
+                    where: { id: tag.id || uuid_1.v4(), subAccountId: subaccountId },
+                    update: tag,
+                    create: __assign(__assign({}, tag), { subAccountId: subaccountId })
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.getTagsForSubaccount = function (subaccountId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.subAccount.findUnique({
+                    where: { id: subaccountId },
+                    select: { Tags: true }
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.deleteTag = function (tagId) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.tag["delete"]({ where: { id: tagId } })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.upsertContact = function (contact) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.contact.upsert({
+                    where: { id: contact.id || uuid_1.v4() },
+                    update: contact,
+                    create: contact
+                })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/, response];
+        }
+    });
+}); };
+exports.getFunnels = function (subacountId) { return __awaiter(void 0, void 0, void 0, function () {
+    var funnels;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.funnel.findMany({
+                    where: { subAccountId: subacountId },
+                    include: { FunnelPages: true }
+                })];
+            case 1:
+                funnels = _a.sent();
+                return [2 /*return*/, funnels];
+        }
+    });
+}); };
+exports.getFunnel = function (funnelId) { return __awaiter(void 0, void 0, void 0, function () {
+    var funnel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, db_1.db.funnel.findUnique({
+                    where: { id: funnelId },
+                    include: {
+                        FunnelPages: {
+                            orderBy: {
+                                order: 'asc'
+                            }
+                        }
+                    }
+                })];
+            case 1:
+                funnel = _a.sent();
+                return [2 /*return*/, funnel];
         }
     });
 }); };
